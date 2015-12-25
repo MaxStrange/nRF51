@@ -113,7 +113,6 @@ static void send(uint8_t data)
   //send the upper four bits
   uint8_t upper_bits = (0xF0 & data) >> 4;
   send_4_bits(upper_bits);
-  pulse();
   //send the lower four bits
   send_4_bits(data);
 }
