@@ -15,6 +15,6 @@ int main(void)
     {
       led_pattern_dance();
       nrf_delay_ms(500);
-      //uart_write_str("hello");
+      uart_write_str("hello");
     }
 }

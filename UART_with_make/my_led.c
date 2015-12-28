@@ -5,6 +5,11 @@
 #include "boards.h"
 #include "nrf_delay.h"
 
+void led_all_off(void)
+{
+  NRF_GPIO->OUT |= LED1 | LED2 | LED3 | LED4;
+}
+
 void led_blink_all(void)
 {
   NRF_GPIO->OUT ^= LED1 | LED2 | LED3 | LED4;
@@ -33,4 +38,9 @@ void led_pattern_dance(void)
   nrf_delay_ms(50);
   NRF_GPIO->OUT ^= LED1 | LED2;
   nrf_delay_ms(50);
+}
+
+void led_toggle(uint32_t led)
+{
+  NRF_GPIO->OUT ^= led;
 }
