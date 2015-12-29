@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include "nrf_delay.h"
 #include "my_lcd.h"
+#include "my_led.h"
+
+/*Function declarations - private helpers*/
+static void pulse(void);
+static void send(uint8_t data);
+static void send_4_bits(uint8_t data);
 
 /*
 Initializes the actual lcd module.
@@ -27,7 +33,7 @@ void lcd_begin(void)
   nrf_delay_ms(5);
 
   send_4_bits(0x03);
-  nrf_delay_ms(1);
+  nrf_delay_us(150);
 
   send_4_bits(0x02);
 
@@ -42,19 +48,19 @@ void lcd_begin(void)
   */
 
   nrf_delay_ms(1);
-  send(0x28);//2 lines of display. See p.29 table 8.
+  send(LCD_CMND_TWO_LINES);//2 lines of display
 
   nrf_delay_ms(1);
-  send(0x08);//display off
+  send(LCD_CMND_DSPLY_OFF);//display off
 
   nrf_delay_ms(1);
-  send(0x01);//clear display
+  send(LCD_CMND_CLR_DSPLY);//clear display
 
   nrf_delay_ms(1);
-  send(0x06);//have display shift left when adding chars - see p.26
+  send(LCD_CMND_SHIFT_MODE_LEFT);//have display shift left when adding chars - see p.26
 
   nrf_delay_ms(1);
-  send(0x0C);//Display on, no blink
+  send(LCD_CMND_DSPLY_ON_NO_BLINK);//Display on, no blink
 }
 
 /*
@@ -75,7 +81,8 @@ Initializes the pin configuration for the lcd module.
 */
 void lcd_init(void)
 {
-  NRF_GPIO->DIRSET |= LCDPIN_E | LCDPIN_RS | LCDPIN_D4 | LCDPIN_D5 | LCDPIN_D6 | LCDPIN_D7;
+  NRF_GPIO->DIRSET = LCDPIN_E | LCDPIN_RS |
+                     LCDPIN_D4 | LCDPIN_D5 | LCDPIN_D6 | LCDPIN_D7;
 }
 
 void lcd_write_char(uint8_t c)
@@ -102,10 +109,10 @@ Private methods
 
 static void pulse(void)
 {
-  NRF_GPIO->OUTSET |= LCDPIN_E;
-  nrf_delay_us(1);
-  NRF_GPIO->OUTCLR |= LCDPIN_E;
-  nrf_delay_us(1);
+  NRF_GPIO->OUTSET = LCDPIN_E;
+  nrf_delay_us(20);
+  NRF_GPIO->OUTCLR = LCDPIN_E;
+  nrf_delay_us(20);
 }
 
 static void send(uint8_t data)
@@ -123,13 +130,8 @@ a byte.
 */
 static void send_4_bits(uint8_t data)
 {
-  //take only the lower four bits of data
-  data &= 0x0F;
-  //shift data over by LCDPIN_D4's location number of bits to align it with
-  //the four gpio pins you are sending on. Then AND it with those four bits
-  //to get the bit string you need to send.
-  uint8_t bits_to_set = ((data << _LCD_PIN_NUM_D4) & (LCDPIN_D4 | LCDPIN_D5 | LCDPIN_D6 | LCDPIN_D7));
-  NRF_GPIO->OUTSET |= bits_to_set;
-  NRF_GPIO->OUTCLR |= ~bits_to_set;
+  NRF_GPIO->OUTCLR = LCDPIN_D4 | LCDPIN_D5 | LCDPIN_D6 | LCDPIN_D7;
+  NRF_GPIO->OUTSET = (data & 0x0F) << _LCD_PIN_NUM_D4;
+  NRF_GPIO->OUTCLR = (~data & 0x0F) << _LCD_PIN_NUM_D4;
   pulse();
 }
