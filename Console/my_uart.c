@@ -75,10 +75,10 @@ NRF_GPIO->RXPINCFG &= ~(1 << 1);  //connect rx to input buffer
 NRF_GPIO->RXPINCFG |= (1 << 2) | (1 << 3); //enable the pull-up on rx
 
 //PSELTXD
-NRF_UART0->PSELTXD = __TX_PIN_NUMBER;//TXPIN;  //tell the uart module which pin is tx
+NRF_UART0->PSELTXD = __TX_PIN_NUMBER;//tell the uart module which pin is tx
 
 //PSELRXD
-NRF_UART0->PSELRXD = __RX_PIN_NUMBER;//RXPIN;  //tell the uart module which pin is rx
+NRF_UART0->PSELRXD = __RX_PIN_NUMBER;//tell the uart module which pin is rx
 
 //hardware flow control (if enabled)
 NRF_UART0->PSELCTS = UART_PIN_DISCONNECTED;
@@ -93,7 +93,7 @@ NVIC_SetPriority(UART0_IRQn, 3);
 NVIC_EnableIRQ(UART0_IRQn);
 
 //BAUDRATE
-NRF_UART0->BAUDRATE = 0x00275000; //set to 9600 baud
+NRF_UART0->BAUDRATE = 0x00275000;//set to 9600 baud
 
 //enable
 NRF_UART0->ENABLE = 0x04;//enable the uart
@@ -113,7 +113,7 @@ void uart_write_str(const char *str)
     circular_queue_write_char(&tx_buffer, *str++);
   }
 
-  send_next_byte();
+  send_next_byte();//have to load a character into the buffer before ISR will fire
   NRF_UART0->TASKS_STARTTX = 1;//let interrupts take care of sending the data
 }
 
@@ -130,7 +130,14 @@ but replaces the last char with a nul terminator.
 */
 static void get_user_input(void)
 {
-  //TODO
+  bool rx_interrupt_already_enabled = ((NRF_UART0->INTENSET) & (1 << 7));
+
+  NRF_UART0->INTENSET = (1 << 7);
+  while (!rx_data_is_complete)
+    ;//block until you get a complete statement from user
+  NRF_UART0->INTENCLR = (uint8_t)rx_interrupt_already_enabled;
+
+  rx_data_is_complete = false;
 }
 
 static void read_from_rx_into_str(char *str, uint32_t str_length)
