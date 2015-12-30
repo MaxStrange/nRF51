@@ -9,7 +9,10 @@
 void led_all_off(void);
 void led_blink_all(void);
 void led_init(void);
+void led_pattern_breathe(void);
 void led_pattern_dance(void);
 void led_toggle(uint32_t led);
+void led_turn_off(uint32_t led);
+void led_turn_on(uint32_t led);
 
 #endif /*MY_LED_H*/

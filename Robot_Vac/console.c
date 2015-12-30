@@ -13,7 +13,7 @@
 
 static bool execute_command(const char *cmd);
 
-static const char *help_str = "Usage: blink, dance.\n";
+static const char *help_str = "Usage: blink, dance, breathe.\n";
 static char console_input[INPUT_LENGTH];
 
 static const command allowable_commands[] =
@@ -28,6 +28,12 @@ static const command allowable_commands[] =
     "dance",
     &led_pattern_dance,
     "Displays a dancing pattern on the LEDs."
+  },
+
+  {
+    "breathe",
+    &led_pattern_breathe,
+    "Displays a breathing pattern on the LEDs."
   },
 
   {
@@ -85,7 +91,7 @@ static bool execute_command(const char *cmd)
     name = allowable_commands[i].name;
     if (strings_compare(cmd, name))
     {
-      function_pointer p = allowable_commands[i].execute;
+      func_ptr p = allowable_commands[i].execute;
       (*p)();//executes the command's function pointer
       return true;
     }

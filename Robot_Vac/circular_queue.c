@@ -19,6 +19,7 @@ bool circular_queue_is_empty(volatile circular_queue *q)
 char circular_queue_read_next_char(volatile circular_queue *q)
 {
   char c = q->queue[q->read_index];
+  q->queue[q->read_index] = '\0';//clear out that character
   q->read_index += 1;
 
   if (q->read_index >= QUEUE_SIZE)
@@ -32,6 +33,7 @@ char circular_queue_read_next_char(volatile circular_queue *q)
 
 void circular_queue_remove_next_char(volatile circular_queue *q)
 {
+  q->queue[q->read_index] = '\0';//clear out that character
   q->read_index += 1;
 
   if (q->read_index >= QUEUE_SIZE)

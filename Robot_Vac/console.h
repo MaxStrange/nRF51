@@ -11,11 +11,11 @@ Defines
 Typedefs
 */
 
-typedef void(*function_pointer)(void);
+typedef void(*func_ptr)(void);
 typedef struct
 {
   const char *name;
-  function_pointer execute;
+  func_ptr execute;
   const char *help;
 } command;
 
