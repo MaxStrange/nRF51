@@ -31,7 +31,7 @@ int main(void)
 
 //TODO : then refactor to get rid of volatiles and use a callback function
 //        in the timer module
-      uart_write_int(243);
+      lcd_write_int(243);
       nrf_delay_ms(2000);
     }
 }

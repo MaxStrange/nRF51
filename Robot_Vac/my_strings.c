@@ -19,10 +19,9 @@ bool strings_compare(const char *str1, const char *str2)
 void strings_int_to_str(uint16_t i, volatile char * buffer)
 {
   uint8_t index = 0;
-  uint8_t j = 0;
   while (i != 0)
   {
-    j = i % 10;
+    uint8_t j = (i % 10) + '0';
     buffer[index] = j;
 
     i /= 10;
