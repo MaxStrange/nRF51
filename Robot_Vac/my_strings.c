@@ -4,6 +4,23 @@
 
 #include "my_strings.h"
 
+void strings_concatenate(const char *left, const char *right, volatile char *buffer)
+{
+  uint32_t i = 0;
+  while (*left != '\0')
+  {
+    buffer[i] = *left++;
+    i++;
+  }
+
+  while (*right != '\0')
+  {
+    buffer[i] = *right++;
+    i++;
+  }
+
+  buffer[i] = '\0';
+}
 
 bool strings_compare(const char *str1, const char *str2)
 {
