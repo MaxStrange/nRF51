@@ -19,7 +19,6 @@ int main(void)
     uart_init();
     lcd_init();
     lcd_begin();
-    timer_count_to(100);
 
     while (true)
     {

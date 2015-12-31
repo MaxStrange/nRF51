@@ -7,6 +7,7 @@
 
 #include "circular_queue.h"
 #include "my_led.h"
+#include "my_strings.h"
 
 #include "my_uart.h"
 
@@ -27,10 +28,11 @@ static inline void send_next_byte(void);
 /*
 Internal state
 */
-static volatile circular_queue tx_buffer;
+static char int_buffer[20];//used for writing ints to the uart
 static volatile circular_queue rx_buffer;
-static volatile bool rx_data_is_complete = false;
+static volatile circular_queue tx_buffer;
 static volatile uint32_t num_chars_from_user = 0;
+static volatile bool rx_data_is_complete = false;
 
 
 
@@ -104,6 +106,12 @@ NRF_UART0->TASKS_STARTRX = 1;
 //clear ready events
 NRF_UART0->EVENTS_RXDRDY = 0;
 NRF_UART0->EVENTS_TXDRDY = 0;
+}
+
+void uart_write_int(uint32_t i)
+{
+  strings_int_to_str(i, int_buffer);
+  uart_write_str(int_buffer);
 }
 
 void uart_write_str(const char *str)

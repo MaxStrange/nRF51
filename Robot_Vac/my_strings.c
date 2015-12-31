@@ -18,18 +18,26 @@ bool strings_compare(const char *str1, const char *str2)
 
 void strings_int_to_str(uint16_t i, volatile char * buffer)
 {
-  uint8_t index = 0;
-  while (i != 0)
+  if (i == 0)
   {
-    uint8_t j = (i % 10) + '0';
-    buffer[index] = j;
-
-    i /= 10;
-    index++;
+    buffer[0] = '0';
+    buffer[1] = '\0';
   }
+  else
+  {
+    uint8_t index = 0;
+    while (i != 0)
+    {
+      uint8_t j = (i % 10) + '0';
+      buffer[index] = j;
 
-  buffer[index] = '\0';
-  strings_reverse(buffer);
+      i /= 10;
+      index++;
+    }
+
+    buffer[index] = '\0';
+    strings_reverse(buffer);
+  }
 }
 
 void strings_reverse(volatile char * str)

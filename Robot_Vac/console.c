@@ -15,7 +15,7 @@
 static bool execute_command(const char *cmd);
 static void timer_countdown_from_10(void);
 
-static const char *help_str = "Usage: blink, dance, breathe, countdown.\n";
+static const char *help_str = "\nUsage: blink, dance, breathe, countdown.\n";
 static char console_input[INPUT_LENGTH];
 
 static const command allowable_commands[] =
@@ -73,7 +73,7 @@ bool console_go(void)
   }
 
   uart_get_console_input(console_input, INPUT_LENGTH);
-  uart_write_str("You just typed: ");
+  uart_write_str("\nYou just typed: ");
   uart_write_str(console_input);
   uart_write_str("\n");
   nrf_delay_ms(500);//give time for the uart to output
@@ -110,12 +110,16 @@ static bool execute_command(const char *cmd)
 
 static void timer_countdown_from_10(void)
 {
+  led_all_on();
+
   timer_count_to(100);
 
-  while (timer_get_seconds_left > 0)
+  while (timer_get_seconds_left() > 0)
   {
     lcd_clear();
     lcd_goto(0, 0);
     lcd_write_int(timer_get_seconds_left());
   }
+
+  led_all_off();
 }

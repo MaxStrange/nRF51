@@ -57,6 +57,8 @@ void RTC0_IRQHandler(void)
   }
   else
   {
+    seconds_left = 0;
+
     NRF_RTC0->TASKS_STOP = 1;//timer is done
     NRF_RTC0->TASKS_CLEAR = 1;//clear the timer
   }

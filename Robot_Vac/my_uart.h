@@ -13,6 +13,7 @@
 
 void uart_get_console_input(char *buffer, uint32_t buffer_length);
 void uart_init(void);
+void uart_write_int(uint32_t i);
 void uart_write_str(const char *str);
 void UART0_IRQHandler(void);
 
