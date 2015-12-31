@@ -73,7 +73,18 @@ void lcd_begin(void)
 void lcd_clear(void)
 {
   LCD_ALERT_SEND_COMMAND();
-  send(LCD_CMND_CLR_DSPLY);
+  
+  nrf_delay_ms(1);
+  send(LCD_CMND_DSPLY_OFF);//display off
+
+  nrf_delay_ms(1);
+  send(LCD_CMND_CLR_DSPLY);//clear display
+
+  nrf_delay_ms(1);
+  send(LCD_CMND_SHIFT_MODE_LEFT);//have display shift left when adding chars - see p.26
+
+  nrf_delay_ms(1);
+  send(LCD_CMND_DSPLY_ON_NO_BLINK);//Display on, no blink
 }
 
 /*

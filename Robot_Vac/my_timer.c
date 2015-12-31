@@ -6,13 +6,10 @@
 #include "nrf_gpio.h"
 #include "nrf_delay.h"
 
-#include "my_lcd.h"
-
 #include "my_timer.h"
 
 static uint32_t seconds_to_count_to = 0;
 static volatile uint32_t seconds_left = 0;
-//TODO : should pass in a call back function to use to enter text on the lcd
 
 uint32_t timer_get_seconds_left(void)
 {
@@ -29,16 +26,15 @@ void timer_count_to(uint32_t seconds)
   */
   NRF_RTC0->TASKS_STOP = 1;
   NRF_RTC0->TASKS_CLEAR = 1;
+  NRF_RTC0->EVENTS_TICK = 0;//clear the timer flag
 
 
   /*
   Configure the RTC
   */
-  NRF_RTC0->CC[0] = seconds;
   NRF_RTC0->EVTENSET = 1;//enable event routing on tick event
   NRF_RTC0->PRESCALER = 32767;//see Real Time Counter section of ref man//1 Hz
-  NRF_RTC0->INTENSET = (1 << 0) | (1 << 1);//enable interrupt on tick event and overflow
-  NRF_RTC0->EVENTS_TICK = 0;//clear the timer
+  NRF_RTC0->INTENSET = (1 << 0);//enable interrupt on tick event and overflow
 
   /*
   Configre Interrupts
@@ -47,15 +43,10 @@ void timer_count_to(uint32_t seconds)
   NVIC_SetPriority(RTC0_IRQn, 3);
   NVIC_EnableIRQ(RTC0_IRQn);
 
-
   /*
   Start up the RTC
   */
   NRF_RTC0->TASKS_START = 1;//start the rtc
-
-  nrf_delay_ms(2);
-
-  NRF_RTC0->TASKS_TRIGOVRFLW = 1;
 }
 
 
@@ -74,5 +65,4 @@ void RTC0_IRQHandler(void)
 
   //either way, clear the event flag
   NRF_RTC0->EVENTS_TICK = 0;
-  NRF_RTC0->EVENTS_OVRFLW = 0;
 }

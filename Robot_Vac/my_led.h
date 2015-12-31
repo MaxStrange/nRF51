@@ -14,8 +14,7 @@
 void led_all_off(void);
 void led_all_on(void);
 void led_blink_all(void);
-void led_dim_high(uint32_t duration_ms);
-void led_dim_low(uint32_t duration_ms);
+void led_dim_high(float duty_cycle, uint32_t duration_ms);
 void led_init(void);
 void led_pattern_breathe(void);
 void led_pattern_dance(void);
