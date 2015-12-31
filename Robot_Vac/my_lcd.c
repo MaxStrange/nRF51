@@ -1,14 +1,21 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
 #include "nrf_delay.h"
+
 #include "my_lcd.h"
 #include "my_led.h"
+#include "my_strings.h"
 
 /*Function declarations - private helpers*/
 static void pulse(void);
 static void send(uint8_t data);
 static void send_4_bits(uint8_t data);
+
+/*Internal state*/
+static volatile char i_as_str[6];//buffer for write_int function//TODO: really don't want this to be accessed by interrupts
+
 
 /*
 Initializes the actual lcd module.
@@ -97,6 +104,18 @@ void lcd_write_char(uint8_t c)
   send(c);
 }
 
+void lcd_write_int(uint16_t i)
+{
+  strings_int_to_str(i, i_as_str);
+
+  volatile char *str = i_as_str;
+  LCD_ALERT_SEND_CHARACTER();
+  while (*str != '\0')
+  {
+    send(*str++);
+  }
+}
+
 void lcd_write_str(const char *str)
 {
   LCD_ALERT_SEND_CHARACTER();
@@ -110,8 +129,6 @@ void lcd_write_str(const char *str)
 /*
 Private methods
 */
-
-
 
 static void pulse(void)
 {

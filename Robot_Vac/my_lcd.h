@@ -37,6 +37,7 @@ void lcd_clear(void);
 void lcd_goto(uint8_t x, uint8_t y);
 void lcd_init(void);
 void lcd_write_char(uint8_t c);
+void lcd_write_int(uint16_t i);
 void lcd_write_str(const char *str);
 
 #endif //MY_LCD_H
