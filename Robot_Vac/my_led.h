@@ -1,12 +1,18 @@
 #ifndef MY_LED_H
 #define MY_LED_H
 
-#define LED1 (1 << 21)
-#define LED2 (1 << 22)
-#define LED3 (1 << 23)
-#define LED4 (1 << 24)
+#define _LED1_PIN_NUMBER 21
+#define _LED2_PIN_NUMBER 22
+#define _LED3_PIN_NUMBER 23
+#define _LED4_PIN_NUMBER 24
+
+#define LED1 (1 << _LED1_PIN_NUMBER)
+#define LED2 (1 << _LED2_PIN_NUMBER)
+#define LED3 (1 << _LED3_PIN_NUMBER)
+#define LED4 (1 << _LED4_PIN_NUMBER)
 
 void led_all_off(void);
+void led_all_on(void);
 void led_blink_all(void);
 void led_init(void);
 void led_pattern_breathe(void);
