@@ -8,12 +8,14 @@
 #include "my_uart.h"
 #include "my_strings.h"
 #include "my_lcd.h"
+#include "my_timer.h"
 
 #include "console.h"
 
 static bool execute_command(const char *cmd);
+static void timer_countdown_from_10(void);
 
-static const char *help_str = "Usage: blink, dance, breathe.\n";
+static const char *help_str = "Usage: blink, dance, breathe, countdown.\n";
 static char console_input[INPUT_LENGTH];
 
 static const command allowable_commands[] =
@@ -34,6 +36,12 @@ static const command allowable_commands[] =
     "breathe",
     &led_pattern_breathe,
     "Displays a breathing pattern on the LEDs."
+  },
+
+  {
+    "countdown",
+    &timer_countdown_from_10,//not in timer module - purely debug function
+    "Counts down on the lcd from 10."
   },
 
   {
@@ -68,10 +76,6 @@ bool console_go(void)
   uart_write_str("You just typed: ");
   uart_write_str(console_input);
   uart_write_str("\n");
-  lcd_write_str("                    ");
-  lcd_goto(0, 0);
-  //TODO: get this to work://lcd_clear();
-  lcd_write_str(console_input);
   nrf_delay_ms(500);//give time for the uart to output
 
   bool worked = execute_command(console_input);
@@ -102,4 +106,16 @@ static bool execute_command(const char *cmd)
   }
 
   return false;//never found the given function
+}
+
+static void timer_countdown_from_10(void)
+{
+  timer_count_to(100);
+
+  while (timer_get_seconds_left > 0)
+  {
+    lcd_clear();
+    lcd_goto(0, 0);
+    lcd_write_int(timer_get_seconds_left());
+  }
 }

@@ -117,7 +117,7 @@ static void pwm_go(float duty_cycle, uint32_t duration_ms)
   NRF_TIMER0->PRESCALER = 1;
   NRF_TIMER0->EVENTS_COMPARE[0] = 0;//manually clear the event flag
 
-  NRF_TIMER0->CC[1] = 64000;
+  NRF_TIMER0->CC[1] = 65536;
   NRF_TIMER0->INTENSET = (1 << 17) | (1 << 16);//interrupt on cc[1] and cc[0]
   NRF_TIMER0->EVENTS_COMPARE[1] = 0;//manually clear the event flag
 

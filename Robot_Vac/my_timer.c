@@ -49,8 +49,6 @@ void timer_count_to(uint32_t seconds)
   NRF_RTC0->TASKS_START = 1;//start the rtc
 }
 
-
-
 void RTC0_IRQHandler(void)
 {
   if (seconds_left > 0)
