@@ -8,6 +8,10 @@
 
 #include "my_timer.h"
 
+static const uint32_t PRESCALER_VALUE = 64000;
+static const uint8_t TICKS_PER_ROLLOVER = 14;
+
+static volatile uint8_t ticks_so_far_this_second = 0;
 static uint32_t seconds_to_count_to = 0;
 static volatile uint32_t seconds_left = 0;
 
@@ -33,7 +37,8 @@ void timer_count_to(uint32_t seconds)
   Configure the RTC
   */
   NRF_RTC0->EVTENSET = 1;//enable event routing on tick event
-  NRF_RTC0->PRESCALER = 32767;//see Real Time Counter section of ref man//1 Hz
+  NRF_RTC0->PRESCALER = PRESCALER_VALUE;//6.9 Hz - close to a whole number
+
   NRF_RTC0->INTENSET = (1 << 0);//enable interrupt on tick event and overflow
 
   /*
@@ -53,7 +58,12 @@ void RTC0_IRQHandler(void)
 {
   if (seconds_left > 0)
   {
-    seconds_left -= 1;
+    ticks_so_far_this_second += 1;
+    if (ticks_so_far_this_second >= TICKS_PER_ROLLOVER)
+    {
+      ticks_so_far_this_second = 0;
+      seconds_left -= 1;
+    }
   }
   else
   {

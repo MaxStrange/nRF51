@@ -112,7 +112,7 @@ static void timer_countdown_from_10(void)
 {
   led_all_on();
 
-  timer_count_to(100);
+  timer_count_to(10);
 
   while (timer_get_seconds_left() > 0)
   {

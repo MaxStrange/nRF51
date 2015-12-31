@@ -29,10 +29,5 @@ int main(void)
         uart_write_str(help_str);
         uart_write_str(" ");
       }
-
-    // uint32_t seconds_left = timer_get_seconds_left();
-    // lcd_clear();
-    // lcd_goto(0, 0);
-    // lcd_write_int(seconds_left);
     }
 }
