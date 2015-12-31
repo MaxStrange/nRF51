@@ -8,15 +8,18 @@
 #include "my_uart.h"
 #include "console.h"
 #include "my_lcd.h"
+#include "my_timer.h"
+#include "my_clock.h"
 
 
 int main(void)
 {
+    clock_init();
     led_init();
     uart_init();
     lcd_init();
     lcd_begin();
-//    timer_count_to(10);
+    timer_count_to(100);
 
     while (true)
     {
@@ -27,11 +30,9 @@ int main(void)
       //   uart_write_str(help_str);
       // }
 
-//TODO : test the write_int function, then test the timer module.
-
-//TODO : then refactor to get rid of volatiles and use a callback function
-//        in the timer module
-      lcd_write_int(243);
-      nrf_delay_ms(2000);
+      uint32_t seconds_left = timer_get_seconds_left();
+      lcd_goto(0, 0);
+      lcd_write_int(seconds_left);
+      nrf_delay_ms(300);
     }
 }
