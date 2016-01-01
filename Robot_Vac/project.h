@@ -15,6 +15,7 @@ Peripherals in use by which modules:
 NRF_CLOCK   - low frequency clock - used by my_clock
 NRF_TIMER0  - timer 0             - used by my_led for pwm
 NRF_TIMER1  - timer 1             - used by range_finder
+NRF_TIMER2  - timer 2             - used by servo for pwm
 NRF_RTC0    - real time counter 0 - used by my_timer
 NRF_UART0   - uart 0              - used by my_uart
 NRF_GPIOTE  - including interrupt - used by range_finder
