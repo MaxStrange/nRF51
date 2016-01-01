@@ -48,8 +48,6 @@ int main(void)
     End button stuff
     */
 
-
-
     while (true)
     {
       // bool worked = console_go();
@@ -59,6 +57,11 @@ int main(void)
       //   uart_write_str(help_str);
       //   uart_write_str(" ");
       // }
+
+//      lcd_clear_and_write("hello!");
+//      lcd_clear_and_write("Please push the button to start.");
+      lcd_clear_and_write("Happy days are here again.");
+      nrf_delay_ms(2000);
     }
 }
 

@@ -34,6 +34,7 @@
 /*Function declarations - API methods*/
 void lcd_begin(void);
 void lcd_clear(void);
+void lcd_clear_and_write(const char *str);
 void lcd_goto(uint8_t x, uint8_t y);
 void lcd_init(void);
 void lcd_write_char(uint8_t c);

@@ -12,6 +12,7 @@
 static void pulse(void);
 static void send(uint8_t data);
 static void send_4_bits(uint8_t data);
+static void write_all_chars_in_str(volatile const char *str);
 
 /*Internal state*/
 static volatile char i_as_str[6];//buffer for write_int function//TODO: really don't want this to be accessed by interrupts
@@ -73,7 +74,7 @@ void lcd_begin(void)
 void lcd_clear(void)
 {
   LCD_ALERT_SEND_COMMAND();
-  
+
   nrf_delay_ms(1);
   send(LCD_CMND_DSPLY_OFF);//display off
 
@@ -87,6 +88,13 @@ void lcd_clear(void)
   send(LCD_CMND_DSPLY_ON_NO_BLINK);//Display on, no blink
 }
 
+void lcd_clear_and_write(const char *str)
+{
+  lcd_clear();
+  lcd_goto(0, 0);
+  lcd_write_str(str);
+}
+
 /*
 Moves the cursor to the location specified,
 using zero-based indexing.
@@ -94,10 +102,10 @@ using zero-based indexing.
 void lcd_goto(uint8_t x, uint8_t y)
 {
   LCD_ALERT_SEND_COMMAND();
-  if (x == 0)
-    send(0x80 + y);
+  if (y == 0)
+    send(0x80 + x);
   else
-    send(0xC0 + y);
+    send(0xC0 + x);
 }
 
 /*
@@ -118,21 +126,66 @@ void lcd_write_char(uint8_t c)
 void lcd_write_int(uint16_t i)
 {
   strings_int_to_str(i, i_as_str);
-
   volatile char *str = i_as_str;
-  LCD_ALERT_SEND_CHARACTER();
-  while (*str != '\0')
-  {
-    send(*str++);
-  }
+  write_all_chars_in_str(str);
 }
 
 void lcd_write_str(const char *str)
 {
-  LCD_ALERT_SEND_CHARACTER();
-  while (*str != '\0')
+  /*
+  Determine how long the string is
+  */
+  uint32_t len = strings_get_length(str);
+
+  /*
+  If the string is short enough, just display it on the
+  first line.
+  */
+  if (len <= 15)
   {
-    send(*str++);
+    write_all_chars_in_str(str);
+  }
+  else if (len <= 31)
+  {//if the string is short enough to display on both lines, do it
+    static char buffer_right[16];
+    static char buffer_left[16];
+
+    //reinitialize the buffers
+    for (uint8_t i = 0; i < 16; i++)
+    {
+      buffer_left[i] = 0;
+      buffer_right[i] = 0;
+    }
+
+    strings_split(15, str, buffer_left, buffer_right);
+    write_all_chars_in_str(buffer_left);
+    lcd_goto(0, 1);
+    write_all_chars_in_str(buffer_right);
+
+    // uint8_t so_far_written = 0;
+    // LCD_ALERT_SEND_CHARACTER();
+    // while (*str != '\0')
+    // {
+    //   //write the top line
+    //   while ((*str != '\0') && (so_far_written <= 16))
+    //   {
+    //     send(*str++);
+    //     so_far_written++;
+    //   }
+    //
+    //   LCD_ALERT_SEND_CHARACTER();
+    //   //write the bottom line
+    //   while ((*str != '\0') && (so_far_written <= 32))
+    //   {
+    //     send(*str++);
+    //     so_far_written++;
+    //   }
+    //
+    // }
+  }
+  else
+  {//string is too long, have to scroll the lcd //TODO
+    lcd_write_str("string too long.");
   }
 }
 
@@ -168,4 +221,13 @@ static void send_4_bits(uint8_t data)
   NRF_GPIO->OUTSET = (data & 0x0F) << _LCD_PIN_NUM_D4;
   NRF_GPIO->OUTCLR = (~data & 0x0F) << _LCD_PIN_NUM_D4;
   pulse();
+}
+
+static void write_all_chars_in_str(volatile const char *str)
+{
+  LCD_ALERT_SEND_CHARACTER();
+  while (*str != '\0')
+  {
+    send(*str++);
+  }
 }
