@@ -36,10 +36,10 @@ int main(void)
       //   uart_write_str(help_str);
       //   uart_write_str(" ");
       // }
-
-      servo_left_goto(180);
-
-      nrf_delay_ms(1000);
+      for (uint8_t pos = 0; pos <= 180; pos++)
+      {
+        servo_left_goto(pos);
+      }
     }
 
     /*

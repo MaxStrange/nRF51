@@ -16,23 +16,27 @@ void servo_init(void)
 }
 
 /*
-Takes an integer between 0 and ?????
+Takes an integer between 0 and 180. A value of 90 signifies
+the servo's normal resting position.
 */
-void servo_left_goto(uint16_t pos)
+void servo_left_goto(uint8_t pos)
 {
   /*
   Map:
-  0.1     -> 2ms up, 18ms down
-  0.075   -> 1.5ms up, 18.5ms down
-  0.05    -> 1ms up, 19ms down
+  0.028 -> max counter clockwise
+  0.11  -> max clockwise
 
-  //TODO : map the pos to the duty cycle
+  D: 0 : 180 --- R: 0.028 : 0.11
   */
 
-  pwm_go(0.075, 200);
+
+  float location = (pos * (110 - 28) / 180) + 28;
+  location /= 1000.0;
+
+  pwm_go(location, 40);
 }
 
-void servo_right_goto(uint16_t pos)
+void servo_right_goto(uint8_t pos)
 {
   //TODO
   servo_left_goto(pos);

@@ -7,8 +7,8 @@
 
 
 void servo_init(void);
-void servo_left_goto(uint16_t pos);
-void servo_right_goto(uint16_t pos);
+void servo_left_goto(uint8_t pos);
+void servo_right_goto(uint8_t pos);
 
 void TIMER2_IRQHandler(void);
 
