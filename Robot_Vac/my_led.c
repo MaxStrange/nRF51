@@ -113,7 +113,7 @@ static void pwm_go(float duty_cycle, uint32_t duration_ms)
   uint32_t on_trigger = (uint32_t)(((-1.0) * (65536.0) * (duty_cycle - 1)) + 0.5);
 
   NRF_TIMER0->BITMODE = 0;//16 bit timer  0 : 16bit; 1 : 8bit; 2 : 24; 3 : 32
-  NRF_TIMER0->CC[0] = on_trigger;//10000;
+  NRF_TIMER0->CC[0] = on_trigger;
   NRF_TIMER0->PRESCALER = 1;
   NRF_TIMER0->EVENTS_COMPARE[0] = 0;//manually clear the event flag
 

@@ -161,27 +161,6 @@ void lcd_write_str(const char *str)
     write_all_chars_in_str(buffer_left);
     lcd_goto(0, 1);
     write_all_chars_in_str(buffer_right);
-
-    // uint8_t so_far_written = 0;
-    // LCD_ALERT_SEND_CHARACTER();
-    // while (*str != '\0')
-    // {
-    //   //write the top line
-    //   while ((*str != '\0') && (so_far_written <= 16))
-    //   {
-    //     send(*str++);
-    //     so_far_written++;
-    //   }
-    //
-    //   LCD_ALERT_SEND_CHARACTER();
-    //   //write the bottom line
-    //   while ((*str != '\0') && (so_far_written <= 32))
-    //   {
-    //     send(*str++);
-    //     so_far_written++;
-    //   }
-    //
-    // }
   }
   else
   {//string is too long, have to scroll the lcd //TODO

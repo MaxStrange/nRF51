@@ -11,16 +11,11 @@
 #include "my_timer.h"
 #include "my_clock.h"
 #include "my_strings.h"
+#include "range_finder.h"
 
 // static char buffer[33];//lcd is 16x2 plus one for the nul
 // static char user_in[6];//array to take user's input for the timer
 
-/*
-BUTTON stuff, not for final version
-*/
-#define _BUTTON_PIN_NUMBER 16
-#define BUTTON (1 << 16)
-void GPIOTE_IRQHandler(void);
 
 int main(void)
 {
@@ -29,24 +24,7 @@ int main(void)
     uart_init();
     lcd_init();
     lcd_begin();
-
-
-
-    /*
-    BUTTON stuff, not for final version
-    */
-    NRF_GPIO->PIN_CNF[_BUTTON_PIN_NUMBER] = (1 << 2);//enable pulldown - button is pulled low until pushed
-    NRF_GPIOTE->CONFIG[0] = (1 << 0) | (_BUTTON_PIN_NUMBER << 8)
-                              | (2 << 16);//event mode/low to high
-    NRF_GPIOTE->INTENSET = 1;//enable interrupt on button's gpiote channel
-    NRF_GPIOTE->EVENTS_IN[0] = 0;//clear the event flag manually
-
-    NVIC_ClearPendingIRQ(GPIOTE_IRQn);
-    NVIC_SetPriority(GPIOTE_IRQn, 3);
-    NVIC_EnableIRQ(GPIOTE_IRQn);
-    /*
-    End button stuff
-    */
+    range_finder_init();
 
     while (true)
     {
@@ -58,16 +36,11 @@ int main(void)
       //   uart_write_str(" ");
       // }
 
-//      lcd_clear_and_write("hello!");
-//      lcd_clear_and_write("Please push the button to start.");
-      lcd_clear_and_write("Happy days are here again.");
-      nrf_delay_ms(2000);
+      uint8_t dist = range_finder_get_distance();
+      uart_write_str("Distance to nearest object: ");
+      uart_write_int(dist);
+      uart_write_str(" ");
+
+      nrf_delay_ms(1000);
     }
-}
-
-void GPIOTE_IRQHandler(void)
-{
-  led_blink_all();
-
-  NRF_GPIOTE->EVENTS_IN[0] = 0;//clear the event flag
 }

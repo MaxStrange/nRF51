@@ -63,7 +63,7 @@ vpath %.s $(ASM_PATHS)
 OBJECTS = build/gcc_startup_nrf51.o build/system_nrf51.o build/main.o \
 build/circular_queue.o build/console.o build/my_led.o build/my_strings.o \
 build/my_uart.o build/nrf_delay.o build/my_lcd.o build/my_timer.o \
-build/my_clock.o
+build/my_clock.o build/range_finder.o
 
 
 $(TARGET).bin: $(TARGET).elf
@@ -84,6 +84,7 @@ build/my_uart.o : my_uart.c
 build/my_lcd.o : my_lcd.c
 build/my_timer.o : my_timer.c
 build/my_clock.o : my_timer.c
+build/range_finder.o : range_finder.c
 
 build/system_nrf51.o : ../CommonIncludes/components/toolchain/system_nrf51.c
 	mkdir -p $(dir $@)
