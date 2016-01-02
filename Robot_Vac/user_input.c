@@ -10,9 +10,9 @@
 
 #include "user_input.h"
 
-volatile bool user_input_user_should_be_selecting = false;
-volatile bool user_input_user_has_selected_a_size = false;
-volatile e_room_size_t user_input_room_size_to_display = SMALL;
+static volatile bool user_should_be_selecting = false;
+static volatile bool user_has_selected_a_size = false;
+static volatile e_room_size_t room_size_to_display = SMALL;
 static const char * small_str = "SMALL";
 static const char * medium_str = "MEDIUM";
 static const char * large_str = "LARGE";
@@ -22,15 +22,15 @@ static void button_confirm_func(void);
 
 e_room_size_t user_input_get_room_size(void)
 {
-  user_input_user_should_be_selecting = true;
+  user_should_be_selecting = true;
   const char * selected;
 
-  while (!user_input_user_has_selected_a_size)
+  while (!user_has_selected_a_size)
   {
     nrf_delay_ms(100);
     lcd_clear_and_write("Room Size?");
     lcd_goto(0, 1);
-    switch (user_input_room_size_to_display)
+    switch (room_size_to_display)
     {
       case SMALL:
         selected = small_str;
@@ -51,7 +51,7 @@ e_room_size_t user_input_get_room_size(void)
   lcd_clear_and_write("You selected: ");
   lcd_goto(0, 1);
   lcd_write_str(selected);
-  return user_input_room_size_to_display;//the one that is on the display is the one the user selected
+  return room_size_to_display;//the one that is on the display is the one the user selected
 }
 
 void user_input_init(void)
@@ -83,25 +83,25 @@ void user_input_init(void)
 
 static void button_select_func(void)
 {
-  switch (user_input_room_size_to_display)
+  switch (room_size_to_display)
   {
     case SMALL:
-      user_input_room_size_to_display = MEDIUM;
+      room_size_to_display = MEDIUM;
       break;
     case MEDIUM:
-      user_input_room_size_to_display = LARGE;
+      room_size_to_display = LARGE;
       break;
     case LARGE:
-      user_input_room_size_to_display = LARGE;
+      room_size_to_display = SMALL;
       break;
   }
 }
 
 static void button_confirm_func(void)
 {
-  if (user_input_user_should_be_selecting)
+  if (user_should_be_selecting)
   {
-    user_input_user_has_selected_a_size = true;
-    user_input_user_should_be_selecting = false;
+    user_has_selected_a_size = true;
+    user_should_be_selecting = false;
   }
 }

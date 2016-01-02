@@ -57,11 +57,13 @@ int main(void)
       you have the data you need.
       */
       //e_room_size_t room_size = user_input_get_room_size();
-//      user_input_get_room_size();
+      user_input_get_room_size();
 
-      uint8_t dist = range_finder_get_distance();
-      uart_write_str("Dist: "); uart_write_int(dist); uart_write_str("\n");
-      nrf_delay_ms(1000);
+      while (true)
+      {
+        led_pattern_dance();
+        nrf_delay_ms(2000);
+      }
     }
 
     /*
