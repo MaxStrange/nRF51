@@ -14,10 +14,16 @@ static const uint8_t TICKS_PER_ROLLOVER = 14;
 static volatile uint8_t ticks_so_far_this_second = 0;
 static uint32_t seconds_to_count_to = 0;
 static volatile uint32_t seconds_left = 0;
+static volatile uint32_t ticks_total = 0;
 
 uint32_t timer_get_seconds_left(void)
 {
   return seconds_left;
+}
+
+uint32_t timer_get_total_ticks(void)
+{
+  return ticks_total;
 }
 
 void timer_count_to(uint32_t seconds)
@@ -59,6 +65,7 @@ void RTC0_IRQHandler(void)
   if (seconds_left > 0)
   {
     ticks_so_far_this_second += 1;
+    ticks_total += 1;
     if (ticks_so_far_this_second >= TICKS_PER_ROLLOVER)
     {
       ticks_so_far_this_second = 0;

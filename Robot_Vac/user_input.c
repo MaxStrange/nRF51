@@ -7,15 +7,20 @@
 
 #include "my_lcd.h"
 #include "my_gpiote.h"
+#include "my_timer.h"
 
 #include "user_input.h"
 
 static volatile bool user_should_be_selecting = false;
 static volatile bool user_has_selected_a_size = false;
 static volatile e_room_size_t room_size_to_display = SMALL;
+static volatile uint32_t time_of_last_select = 0;//used for debouncing
+
 static const char * small_str = "SMALL";
 static const char * medium_str = "MEDIUM";
 static const char * large_str = "LARGE";
+
+
 static void button_select_func(void);
 static void button_confirm_func(void);
 
@@ -83,6 +88,10 @@ void user_input_init(void)
 
 static void button_select_func(void)
 {
+  nrf_delay_us(1000);
+  if (!(NRF_GPIO->IN & SELECTION_BUTTON))
+    return;//debounce
+
   switch (room_size_to_display)
   {
     case SMALL:
