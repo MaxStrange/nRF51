@@ -17,7 +17,6 @@
 #include "drive_system.h"
 
 
-static volatile bool flag_range_sensor_sees_cliff = false;
 static volatile bool flag_bumped_into_something = false;
 
 
@@ -31,7 +30,7 @@ static uint32_t get_seconds_to_clean_room(e_room_size_t room_size)
   switch (room_size)
   {
     case SMALL:
-      seconds_to_clean_room = 600;//TODO : test : 600;//10 minutes
+      seconds_to_clean_room = 30;//TODO : test : 600;//10 minutes
       break;
     case MEDIUM:
       seconds_to_clean_room = 45;//TODO : test : 1800;//30 minutes
@@ -67,6 +66,7 @@ int main(void)
     range_finder_init();
     drive_system_init();
     user_input_init();
+    //TODO:bumper_init(&flag_bumped_into_something);
 
     //debug console
 
@@ -129,15 +129,13 @@ int main(void)
         if ((seconds_left % 45) == 0)
         {
           drive_system_randomize_direction(seconds_to_clean_room - seconds_left);
-
-          //uint8_t random_number = random_numbers_get();
         }
 
         /*
         If you bumped into something, reverse.
         */
         if (flag_bumped_into_something)
-        {//reverse mode should reverse for a few seconds, randomize, then straight
+        {
           drive_system_set_mode(REVERSE, seconds_to_clean_room - seconds_left);
           flag_bumped_into_something = false;
         }
@@ -146,52 +144,13 @@ int main(void)
         If the range sensor stops seeing the ground at the normal distance,
         it is possibly a cliff. Back up and try again.
         */
-        if (flag_range_sensor_sees_cliff)
+        if (range_finder_get_sees_cliff())
         {
           drive_system_set_mode(REVERSE, seconds_to_clean_room - seconds_left);
-          flag_range_sensor_sees_cliff = false;
         }
 
         drive_system_update_time(seconds_left);
         last_read_seconds_left = seconds_left;
       }
     }
-
-    /*
-    High level pseudo code:
-
-    -Initialize everything
-
-    while (true):
-      -sleep
-      -wake up on gpio input interrupt
-      -get user Data
-      -set up timer
-      -drive spiral mode on
-
-      while (timer not finished)
-        -display timer Data on lcd
-
-        if (drive spiral mode)
-          -drive motors in spiral pattern
-
-        if (bumped in to something)
-          -back up
-          -bumped into something = false
-          -drive straight mode on
-          -drive spiral mode off
-          -turn a random amount
-
-        if (drive straight mode)
-          -drive in straight line
-
-        if (range finder does not sense ground)
-          -back up
-          -turn 90 degrees
-          -drive straight mode on
-          -drive spiral mode off
-      end while timer not finished
-    end while true
-    */
-
 }

@@ -63,6 +63,17 @@ uint8_t range_finder_get_distance(void)
   return distance_as_int;
 }
 
+/*
+Checks whether a cliff is present.
+*/
+bool range_finder_get_sees_cliff(void)
+{
+  //TODO : check distance, see if it is normal, if not, log it. Enough logs in
+  //a row means a cliff.
+
+  return false;
+}
+
 void range_finder_init(void)
 {
   NRF_GPIO->PIN_CNF[_ECHO_PIN_NUMBER] = (0 << 0) | (1 << 2);//input, pulldown

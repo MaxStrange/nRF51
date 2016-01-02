@@ -63,6 +63,7 @@ e_room_size_t user_input_get_room_size(void)
     }
     lcd_write_str(selected);
   }
+  user_has_selected_a_size = false;
 
   lcd_clear_and_write("You selected: ");
   lcd_goto(0, 1);
