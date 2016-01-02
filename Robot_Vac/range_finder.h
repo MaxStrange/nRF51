@@ -7,11 +7,6 @@
 #define ECHO    (1 << _ECHO_PIN_NUMBER)
 #define TRIGGER (1 << _TRIGGER_PIN_NUMBER)
 
-#define GPIOTE_CHANNEL 3//The channel in gpiote that this module uses
-
-
-void GPIOTE_IRQHandler(void);
-
 
 uint8_t range_finder_get_distance(void);
 void range_finder_init(void);

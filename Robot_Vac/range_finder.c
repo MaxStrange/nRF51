@@ -5,17 +5,21 @@
 #include "boards.h"
 #include "nrf_delay.h"
 
+#include "my_gpiote.h"
+
 #include "range_finder.h"
 
-static volatile bool pulse_has_not_returned = false;
+volatile bool range_finder_pulse_has_not_returned = false;
+
+static void rf_func();
 
 uint8_t range_finder_get_distance(void)
 {
-  if (pulse_has_not_returned)
+  if (range_finder_pulse_has_not_returned)
   {
     //there is an erroneous pulse floating around there somewhere,
     //wait for it to echo back by just skipping this method this time
-    pulse_has_not_returned = false;
+    range_finder_pulse_has_not_returned = false;
 
     nrf_delay_ms(5);
 
@@ -25,10 +29,11 @@ uint8_t range_finder_get_distance(void)
   /*
   Enable echo interrupt
   */
-  NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL] = 0;//clear the event flag
+  NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_RANGE_FINDER] = 0;//clear the event flag
   NVIC_ClearPendingIRQ(GPIOTE_IRQn);
   NVIC_SetPriority(GPIOTE_IRQn, 3);
   NVIC_EnableIRQ(GPIOTE_IRQn);
+  gpiote_set_rf_func(&rf_func);
 
   uint16_t microsecs_duration = 0;
   static const uint16_t maximum = 11640;
@@ -42,8 +47,8 @@ uint8_t range_finder_get_distance(void)
   nrf_delay_us(15);
   NRF_GPIO->OUT &= ~TRIGGER;
 
-  pulse_has_not_returned = true;
-  while ((pulse_has_not_returned) && (microsecs_duration < maximum))
+  range_finder_pulse_has_not_returned = true;
+  while ((range_finder_pulse_has_not_returned) && (microsecs_duration < maximum))
   {
     nrf_delay_us(10);
     microsecs_duration += 10;
@@ -67,15 +72,14 @@ void range_finder_init(void)
   /*
   Configure interrupt for the echo pin, but don't enable yet.
   */
-  NRF_GPIOTE->CONFIG[GPIOTE_CHANNEL] = (1 << 0) | (_ECHO_PIN_NUMBER << 8) | (2 << 16);//event mode, hi to low
-  NRF_GPIOTE->INTENSET = (1 << GPIOTE_CHANNEL);
+  NRF_GPIOTE->CONFIG[GPIOTE_CHANNEL_RANGE_FINDER] = (1 << 0) | (_ECHO_PIN_NUMBER << 8) | (2 << 16);//event mode, hi to low
+  NRF_GPIOTE->INTENSET = (1 << GPIOTE_CHANNEL_RANGE_FINDER);
 }
 
 
 
-void GPIOTE_IRQHandler(void)
-{
-  pulse_has_not_returned = false;
 
-  NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL] = 0;//clear the event flag
+static void rf_func(void)
+{
+  range_finder_pulse_has_not_returned = false;
 }

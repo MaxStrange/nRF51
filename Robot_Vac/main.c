@@ -13,6 +13,7 @@
 #include "my_strings.h"
 #include "range_finder.h"
 #include "servo.h"
+#include "user_input.h"
 
 // static char buffer[33];//lcd is 16x2 plus one for the nul
 // static char user_in[6];//array to take user's input for the timer
@@ -26,20 +27,41 @@ int main(void)
     lcd_begin();
     range_finder_init();
     servo_init();
+    user_input_init();
+
+    //debug console
+
+    // while (true)
+    // {
+    //   bool worked = console_go();
+    //   if (!worked)
+    //   {
+    //     const char *help_str = console_get_help_str();
+    //     uart_write_str(help_str);
+    //     uart_write_str(" ");
+    //   }
+    // }
 
     while (true)
     {
-      // bool worked = console_go();
-      // if (!worked)
-      // {
-      //   const char *help_str = console_get_help_str();
-      //   uart_write_str(help_str);
-      //   uart_write_str(" ");
-      // }
-      for (uint8_t pos = 0; pos <= 180; pos++)
-      {
-        servo_left_goto(pos);
-      }
+      /*
+      Sleep until woken by user input
+      TODO : Sleep mode OFF can't be tested directly while hooked up to the
+      debugger, since it instead enters EMULATED system off, which actually
+      accidentally executes code after it is supposed to be asleep. Who knows
+      what other mischief the CPU gets into when it is supposed to be sleeping.
+      */
+
+      /*
+      When user pushed button, start up the LCD and interact with them until
+      you have the data you need.
+      */
+      //e_room_size_t room_size = user_input_get_room_size();
+//      user_input_get_room_size();
+
+      uint8_t dist = range_finder_get_distance();
+      uart_write_str("Dist: "); uart_write_int(dist); uart_write_str("\n");
+      nrf_delay_ms(1000);
     }
 
     /*
