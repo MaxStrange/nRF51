@@ -9,13 +9,15 @@
 #include "my_strings.h"
 #include "my_lcd.h"
 #include "my_timer.h"
+#include "random_numbers.h"
 
 #include "console.h"
 
 static bool execute_command(const char *cmd);
 static void timer_countdown_from_10(void);
+static void random_number_get_debug(void);
 
-static const char *help_str = "\nUsage: blink, dance, breathe, countdown.\n";
+static const char *help_str = "\nUsage: blink, dance, breathe, countdown, random.\n";
 static char console_input[INPUT_LENGTH];
 
 static const command allowable_commands[] =
@@ -42,6 +44,12 @@ static const command allowable_commands[] =
     "countdown",
     &timer_countdown_from_10,//not in timer module - purely debug function
     "Counts down on the lcd from 10."
+  },
+
+  {
+    "random",
+    &random_number_get_debug,//not in random number module - purely debug function
+    "Gets a random number."
   },
 
   {
@@ -122,4 +130,12 @@ static void timer_countdown_from_10(void)
   }
 
   led_all_off();
+}
+
+static void random_number_get_debug(void)
+{
+  uint8_t r = random_numbers_get();
+  uart_write_str("\nHere is your number: ");
+  uart_write_int(r);
+  uart_write_str(" ");
 }

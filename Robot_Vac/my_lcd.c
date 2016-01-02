@@ -4,9 +4,10 @@
 
 #include "nrf_delay.h"
 
-#include "my_lcd.h"
 #include "my_led.h"
 #include "my_strings.h"
+
+#include "my_lcd.h"
 
 /*Function declarations - private helpers*/
 static void pulse(void);
@@ -166,6 +167,20 @@ void lcd_write_str(const char *str)
   {//string is too long, have to scroll the lcd //TODO
     lcd_write_str("string too long.");
   }
+}
+
+void lcd_write_time(uint32_t seconds)
+{
+  uint16_t minutes = seconds / 60;
+  uint8_t display_seconds = seconds % 60;
+
+  lcd_write_int(minutes);
+  lcd_write_str(":");
+
+  if (display_seconds < 10)
+    lcd_write_int(0);
+
+  lcd_write_int(display_seconds);
 }
 
 

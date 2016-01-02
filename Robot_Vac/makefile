@@ -64,7 +64,7 @@ OBJECTS = build/gcc_startup_nrf51.o build/system_nrf51.o build/main.o \
 build/circular_queue.o build/console.o build/my_led.o build/my_strings.o \
 build/my_uart.o build/nrf_delay.o build/my_lcd.o build/my_timer.o \
 build/my_clock.o build/range_finder.o build/servo.o build/user_input.o \
-build/my_gpiote.o
+build/my_gpiote.o build/random_numbers.o build/drive_system.o
 
 
 $(TARGET).bin: $(TARGET).elf
@@ -89,6 +89,8 @@ build/range_finder.o : range_finder.c
 build/servo.o : servo.c
 build/user_input.o : user_input.c
 build/my_gpiote.o : my_gpiote.c
+build/random_numbers.o : random_numbers.c
+build/drive_system.o : drive_system.c
 
 build/system_nrf51.o : ../CommonIncludes/components/toolchain/system_nrf51.c
 	mkdir -p $(dir $@)

@@ -40,5 +40,6 @@ void lcd_init(void);
 void lcd_write_char(uint8_t c);
 void lcd_write_int(uint16_t i);
 void lcd_write_str(const char *str);
+void lcd_write_time(uint32_t seconds);
 
 #endif //MY_LCD_H
