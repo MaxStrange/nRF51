@@ -88,6 +88,25 @@ void led_pattern_dance(void)
   nrf_delay_ms(50);
 }
 
+void led_pattern_spiral(void)
+{
+  led_all_off();
+
+  for (uint8_t i = 0; i < 3; i++)
+  {
+    NRF_GPIO->OUT ^= LED1;
+    nrf_delay_ms(60);
+    NRF_GPIO->OUT ^= LED1 | LED2;
+    nrf_delay_ms(60);
+    NRF_GPIO->OUT ^= LED2 | LED4;
+    nrf_delay_ms(60);
+    NRF_GPIO->OUT ^= LED4 | LED3;
+    nrf_delay_ms(60);
+    NRF_GPIO->OUT ^= LED3;
+    nrf_delay_ms(60);
+  }
+}
+
 void led_toggle(uint32_t led)
 {
   NRF_GPIO->OUT ^= led;

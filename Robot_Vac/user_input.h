@@ -15,6 +15,7 @@ typedef enum
   LARGE
 } e_room_size_t;
 
+void ask_user_go_to_middle_of_room(void);
 e_room_size_t user_input_get_room_size(void);
 void user_input_init(void);
 

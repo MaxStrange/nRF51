@@ -13,17 +13,28 @@
 
 static volatile bool user_should_be_selecting = false;
 static volatile bool user_has_selected_a_size = false;
+static volatile bool waiting_for_user_to_place_in_middle = false;
 static volatile e_room_size_t room_size_to_display = SMALL;
-static volatile uint32_t time_of_last_select = 0;//used for debouncing
 
 static const char * small_str = "SMALL";
 static const char * medium_str = "MEDIUM";
 static const char * large_str = "LARGE";
 
-
 static void button_select_func(void);
 static void button_confirm_func(void);
 
+
+void ask_user_go_to_middle_of_room(void)
+{
+  waiting_for_user_to_place_in_middle = true;
+  while (waiting_for_user_to_place_in_middle)
+  {
+    lcd_clear_and_write("Put me in middleof room.");
+    nrf_delay_ms(2000);
+    lcd_clear_and_write("Push button whenready.");
+    nrf_delay_ms(2000);
+  }
+}
 
 e_room_size_t user_input_get_room_size(void)
 {
@@ -56,7 +67,9 @@ e_room_size_t user_input_get_room_size(void)
   lcd_clear_and_write("You selected: ");
   lcd_goto(0, 1);
   lcd_write_str(selected);
-  return room_size_to_display;//the one that is on the display is the one the user selected
+  nrf_delay_ms(2000);//give time for user to see message
+  ask_user_go_to_middle_of_room();
+  return room_size_to_display;//the last item on the display is the item the user has selected
 }
 
 void user_input_init(void)
@@ -108,9 +121,18 @@ static void button_select_func(void)
 
 static void button_confirm_func(void)
 {
+  nrf_delay_us(1000);
+  if (!(NRF_GPIO->IN & CONFIRM_BUTTON))
+    return;//debounce
+
+
   if (user_should_be_selecting)
   {
     user_has_selected_a_size = true;
     user_should_be_selecting = false;
+  }
+  else if (waiting_for_user_to_place_in_middle)
+  {
+    waiting_for_user_to_place_in_middle = false;
   }
 }

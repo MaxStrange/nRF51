@@ -56,12 +56,50 @@ int main(void)
       When user pushed button, start up the LCD and interact with them until
       you have the data you need.
       */
-      //e_room_size_t room_size = user_input_get_room_size();
-      user_input_get_room_size();
+      e_room_size_t room_size = user_input_get_room_size();
+      uint32_t seconds_to_clean_room = 0;
+      switch (room_size)
+      {
+        case SMALL:
+          seconds_to_clean_room = 20;//TODO : test : 600;//10 minutes
+          break;
+        case MEDIUM:
+          seconds_to_clean_room = 45;//TODO : test : 1800;//30 minutes
+          break;
+        case LARGE:
+          seconds_to_clean_room = 60;//TODO : test : 2700;//45 minutes
+          break;
+        default:
+          //something has gone wrong
+          while (true)
+          {
+            lcd_clear_and_write("Error has occurred");
+            uart_write_str("Error has occurred in main: room_size");
+            led_pattern_spiral();
+            nrf_delay_ms(3000);
+          }
+      }
+
+      timer_count_to(seconds_to_clean_room);
+      uint16_t seconds_left = seconds_to_clean_room;
+      uint16_t last_read_seconds_left = seconds_left;
+      while (seconds_left > 0)
+      {
+        seconds_left = timer_get_seconds_left();
+
+        if (seconds_left != last_read_seconds_left)
+        {
+          lcd_clear_and_write("Time left: ");
+          lcd_goto(0, 1);
+          lcd_write_int(seconds_left);
+        }
+
+        last_read_seconds_left = seconds_left;
+      }
 
       while (true)
       {
-        led_pattern_dance();
+        led_pattern_spiral();
         nrf_delay_ms(2000);
       }
     }

@@ -18,6 +18,7 @@ void led_dim_high(float duty_cycle, uint32_t duration_ms);
 void led_init(void);
 void led_pattern_breathe(void);
 void led_pattern_dance(void);
+void led_pattern_spiral(void);
 void led_toggle(uint32_t led);
 void led_turn_off(uint32_t led);
 void led_turn_on(uint32_t led);
