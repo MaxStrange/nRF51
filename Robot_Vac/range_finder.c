@@ -6,6 +6,7 @@
 #include "nrf_delay.h"
 
 #include "my_gpiote.h"
+#include "my_uart.h"
 
 #include "range_finder.h"
 
@@ -70,6 +71,7 @@ bool range_finder_get_sees_cliff(void)
 {
   //TODO : check distance, see if it is normal, if not, log it. Enough logs in
   //a row means a cliff.
+  range_finder_get_distance();//DEBUG - TODO change when hardware comes
 
   return false;
 }

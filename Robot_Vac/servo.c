@@ -7,12 +7,18 @@
 
 #include "servo.h"
 
-static void pwm_go(float duty_cycle, uint32_t duration_ms);
+
+static volatile bool control_left_servo = true;//whether or not the ISR should use the left servo
+
+
+static void pwm_go(bool left, float duty_cycle, uint32_t duration_ms);
+
 
 void servo_init(void)
 {
-  NRF_GPIO->PIN_CNF[_SERVO_PIN_NUMBER] = (1 << 0);//configure as output
-  NRF_GPIO->OUT &= ~SERVO;
+  NRF_GPIO->PIN_CNF[_LEFT_SERVO_PIN_NUMBER] = (1 << 0);//configure as output
+  NRF_GPIO->PIN_CNF[_RIGHT_SERVO_PIN_NUMBER] = (1 << 0);//configure as output
+  NRF_GPIO->OUT &= ~(LEFT_SERVO | RIGHT_SERVO);
 }
 
 /*
@@ -21,6 +27,8 @@ the servo's normal resting position.
 */
 void servo_left_goto(uint8_t pos)
 {
+  if (pos > 180)
+    pos = 180;
   /*
   Map:
   0.028 -> max counter clockwise
@@ -33,21 +41,45 @@ void servo_left_goto(uint8_t pos)
   float location = (pos * (110 - 28) / 180) + 28;
   location /= 1000.0;
 
-  pwm_go(location, 40);
+  bool left = true;
+  pwm_go(left, location, 5);
 }
 
 void servo_right_goto(uint8_t pos)
 {
-  //TODO
-  servo_left_goto(pos);
+  if (pos > 180)
+    pos = 180;
+
+  float location = (pos * (110 - 28) / 180) + 28;
+  location /= 1000.0;
+
+  bool left = false;
+  pwm_go(left, location, 5);
+}
+
+void servo_rotate_through_all_angles(void)
+{
+  for (uint8_t i = 0; i <= 180; i++)
+  {
+    servo_left_goto(i);
+  }
+  for (uint8_t i = 180; i > 0; i--)
+  {
+    servo_left_goto(i);
+  }
 }
 
 
 
 
 
-static void pwm_go(float duty_cycle, uint32_t duration_ms)
+static void pwm_go(bool left, float duty_cycle, uint32_t duration_ms)
 {
+  /*
+  Set up the flag that tells the ISR what servo to control.
+  */
+  control_left_servo = left;
+
   /*
   Set up the timer
   */
@@ -63,6 +95,11 @@ static void pwm_go(float duty_cycle, uint32_t duration_ms)
 
   NRF_TIMER2->INTENSET = (1 << 17) | (1 << 16);//interrupt on cc[1] and cc[0]
 
+
+  /*
+  Set up the interrupts for the timer
+  */
+
   NRF_TIMER2->EVENTS_COMPARE[0] = 0;//manually clear the event flag
   NRF_TIMER2->EVENTS_COMPARE[1] = 0;//manually clear the event flag
 
@@ -70,6 +107,10 @@ static void pwm_go(float duty_cycle, uint32_t duration_ms)
   NVIC_SetPriority(TIMER2_IRQn, 3);
   NVIC_EnableIRQ(TIMER2_IRQn);
 
+
+  /*
+  Do the actual task.
+  */
   NRF_TIMER2->TASKS_START = 1;
   nrf_delay_ms(duration_ms);
   NRF_TIMER2->TASKS_STOP = 1;
@@ -78,13 +119,15 @@ static void pwm_go(float duty_cycle, uint32_t duration_ms)
 
 void TIMER2_IRQHandler(void)
 {
+  uint32_t servo = control_left_servo ? LEFT_SERVO : RIGHT_SERVO;
+
   if (NRF_TIMER2->EVENTS_COMPARE[0] == 1)
   {
-    NRF_GPIO->OUT |= SERVO;
+    NRF_GPIO->OUT |= servo;
   }
   else if (NRF_TIMER2->EVENTS_COMPARE[1] == 1)
   {
-    NRF_GPIO->OUT &= ~SERVO;
+    NRF_GPIO->OUT &= ~servo;
 
     NRF_TIMER2->TASKS_CLEAR = 1;
   }

@@ -10,6 +10,7 @@
 static func_ptr button_select_func = NULL;
 static func_ptr button_confirm_func = NULL;
 static func_ptr range_finder_func = NULL;
+static func_ptr bumper_func = NULL;
 
 void GPIOTE_IRQHandler(void)
 {
@@ -25,13 +26,21 @@ void GPIOTE_IRQHandler(void)
   {
     (*range_finder_func)();
   }
+  else if (NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_BUMPER])
+  {
+    (*bumper_func)();
+  }
 
+  NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_BUMPER] = 0;//clear the event flag
   NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_CONFIRM] = 0;//clear the event flag
   NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_SELECT] = 0;//clear the event flag
   NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_RANGE_FINDER] = 0;//clear the event flag
 }
 
-
+void gpiote_set_bumper_func(func_ptr p)
+{
+  bumper_func = p;
+}
 void gpiote_set_button_select_func(func_ptr p)
 {
   button_select_func = p;

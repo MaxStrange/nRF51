@@ -15,6 +15,8 @@
 #include "user_input.h"
 #include "random_numbers.h"
 #include "drive_system.h"
+#include "servo.h"
+#include "bumper.h"
 
 
 static volatile bool flag_bumped_into_something = false;
@@ -66,7 +68,8 @@ int main(void)
     range_finder_init();
     drive_system_init();
     user_input_init();
-    //TODO:bumper_init(&flag_bumped_into_something);
+    bumper_init(&flag_bumped_into_something);
+
 
     //debug console
 
@@ -105,11 +108,13 @@ int main(void)
       uint16_t seconds_left = seconds_to_clean_room;
       uint16_t last_read_seconds_left = seconds_left;
 
-      drive_system_set_mode(SPIRAL, seconds_to_clean_room - seconds_left);
+
+      drive_system_set_mode(SPIRAL, 0);//start spiral mode at time = 0.
 
       while (seconds_left > 0)
       {
         seconds_left = timer_get_seconds_left();
+        uint16_t seconds_since_start = seconds_to_clean_room - seconds_left;
 
         /*
         Update the LCD once a second
@@ -128,7 +133,10 @@ int main(void)
         */
         if ((seconds_left % 45) == 0)
         {
-          drive_system_randomize_direction(seconds_to_clean_room - seconds_left);
+          uart_write_str("Randomizing direction\n.");
+
+          uint16_t time_started_random_mode = seconds_since_start;
+          drive_system_randomize_direction(time_started_random_mode);
         }
 
         /*
@@ -136,7 +144,10 @@ int main(void)
         */
         if (flag_bumped_into_something)
         {
-          drive_system_set_mode(REVERSE, seconds_to_clean_room - seconds_left);
+          uart_write_str("Bumped into something.\n");
+
+          uint16_t time_started_reverse_mode = seconds_since_start;
+          drive_system_set_mode(REVERSE, time_started_reverse_mode);
           flag_bumped_into_something = false;
         }
 
@@ -146,10 +157,13 @@ int main(void)
         */
         if (range_finder_get_sees_cliff())
         {
-          drive_system_set_mode(REVERSE, seconds_to_clean_room - seconds_left);
+          uart_write_str("Have seen a cliff.\n");
+
+          uint16_t time_started_reverse_mode = seconds_since_start;
+          drive_system_set_mode(REVERSE, time_started_reverse_mode);
         }
 
-        drive_system_update_time(seconds_left);
+        drive_system_update_time(seconds_since_start);
         last_read_seconds_left = seconds_left;
       }
     }

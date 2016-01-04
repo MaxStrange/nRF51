@@ -10,6 +10,7 @@
 #include "my_lcd.h"
 #include "my_timer.h"
 #include "random_numbers.h"
+#include "servo.h"
 
 #include "console.h"
 
@@ -41,9 +42,21 @@ static const command allowable_commands[] =
   },
 
   {
+    "spiral",
+    &led_pattern_spiral,
+    "Displays a spiral pattern on the LEDs."
+  },
+
+  {
     "countdown",
     &timer_countdown_from_10,//not in timer module - purely debug function
     "Counts down on the lcd from 10."
+  },
+
+  {
+    "servo",
+    &servo_rotate_through_all_angles,
+    "Rotates the servo through all angles."
   },
 
   {

@@ -5,7 +5,8 @@ typedef enum
 {
   REVERSE,
   SPIRAL,
-  STRAIGHT
+  STRAIGHT,
+  RANDOM
 } e_drive_mode_t;
 
 void drive_system_init(void);
