@@ -71,7 +71,7 @@ int main(void)
     bumper_init(&flag_bumped_into_something);
 
 
-    //debug console
+//    debug console
 
     // while (true)
     // {
@@ -166,5 +166,7 @@ int main(void)
         drive_system_update_time(seconds_since_start);
         last_read_seconds_left = seconds_left;
       }
+      //after timer is done, stop driving
+      drive_system_stop();
     }
 }

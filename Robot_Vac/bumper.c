@@ -16,7 +16,7 @@ static volatile bool *bumped_into_something = NULL;
 static void bumper_func(void);
 
 
-void bumper_init(volatile bool *flag_bumped_into_something)
+void bumper_init(volatile bool * const flag_bumped_into_something)
 {
   bumped_into_something = flag_bumped_into_something;
 

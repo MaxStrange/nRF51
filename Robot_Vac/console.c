@@ -14,11 +14,12 @@
 
 #include "console.h"
 
+static void drive_servo_forward(void);
 static bool execute_command(const char *cmd);
 static void timer_countdown_from_10(void);
 static void random_number_get_debug(void);
 
-static const char *help_str = "\nUsage: blink, dance, breathe, countdown, random.\n";
+static const char *help_str = "\nUsage: blink, dance, drive, breathe, countdown, random, servo.\n";
 static char console_input[INPUT_LENGTH];
 
 static const command allowable_commands[] =
@@ -33,6 +34,12 @@ static const command allowable_commands[] =
     "dance",
     &led_pattern_dance,
     "Displays a dancing pattern on the LEDs."
+  },
+
+  {
+    "drive",
+    &drive_servo_forward,
+    "Drives the servo forward for 10 seconds."
   },
 
   {
@@ -67,7 +74,7 @@ static const command allowable_commands[] =
 
   {
     "END_OF_TABLE",
-    0x00,
+    NULL,
     "End of table indicator."
   }
 };
@@ -105,6 +112,10 @@ bool console_go(void)
 }
 
 
+static void drive_servo_forward(void)
+{
+  servo_left_goto(180);
+}
 
 
 static bool execute_command(const char *cmd)

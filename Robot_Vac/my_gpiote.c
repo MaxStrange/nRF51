@@ -14,19 +14,19 @@ static func_ptr bumper_func = NULL;
 
 void GPIOTE_IRQHandler(void)
 {
-  if (NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_SELECT])
+  if ((NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_SELECT]) && (button_select_func != NULL))
   {
     (*button_select_func)();
   }
-  else if (NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_CONFIRM])
+  else if ((NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_CONFIRM]) && (button_confirm_func != NULL))
   {
     (*button_confirm_func)();
   }
-  else if (NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_RANGE_FINDER])
+  else if ((NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_RANGE_FINDER]) && (range_finder_func != NULL))
   {
     (*range_finder_func)();
   }
-  else if (NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_BUMPER])
+  else if ((NRF_GPIOTE->EVENTS_IN[GPIOTE_CHANNEL_BUMPER]) && (bumper_func != NULL))
   {
     (*bumper_func)();
   }

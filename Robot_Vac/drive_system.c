@@ -52,7 +52,6 @@ void drive_system_set_mode(e_drive_mode_t mode, uint32_t time_started)
 
 void drive_system_stop(void)
 {
-  //TODO
   servo_left_goto(90);
   servo_right_goto(90);
 }
@@ -96,7 +95,11 @@ static void drive_spiral(void)
 {
   //spiral drive happens indefinitely
 
-  servo_left_goto(180 - (current_time * 3));
+  if (current_time % 6 == 0)
+    servo_left_goto(180);
+  else
+    servo_left_goto(0);
+    
   servo_right_goto(180);
 }
 
@@ -110,7 +113,6 @@ static void drive_reverse(void)
   }
   else
   {
-    //TODO
     servo_left_goto(0);
     servo_right_goto(0);
   }
@@ -120,7 +122,6 @@ static void drive_straight(void)
 {
   //straight drive happens indefinitely
 
-  //TODO
   servo_left_goto(180);
   servo_right_goto(180);
 }
