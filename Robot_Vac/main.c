@@ -32,13 +32,13 @@ static uint32_t get_seconds_to_clean_room(e_room_size_t room_size)
   switch (room_size)
   {
     case SMALL:
-      seconds_to_clean_room = 30;//TODO : test : 600;//10 minutes
+      seconds_to_clean_room = 300;//5 minutes
       break;
     case MEDIUM:
-      seconds_to_clean_room = 45;//TODO : test : 1800;//30 minutes
+      seconds_to_clean_room = 900;//15 minutes
       break;
     case LARGE:
-      seconds_to_clean_room = 60;//TODO : test : 2700;//45 minutes
+      seconds_to_clean_room = 1800;//30 minutes
       break;
     default:
       //something has gone wrong
@@ -133,8 +133,6 @@ int main(void)
         */
         if ((seconds_left % 45) == 0)
         {
-          uart_write_str("Randomizing direction\n.");
-
           uint16_t time_started_random_mode = seconds_since_start;
           drive_system_randomize_direction(time_started_random_mode);
         }
@@ -144,8 +142,6 @@ int main(void)
         */
         if (flag_bumped_into_something)
         {
-          uart_write_str("Bumped into something.\n");
-
           uint16_t time_started_reverse_mode = seconds_since_start;
           drive_system_set_mode(REVERSE, time_started_reverse_mode);
           flag_bumped_into_something = false;
@@ -157,8 +153,6 @@ int main(void)
         */
         if (range_finder_get_sees_cliff())
         {
-          uart_write_str("Have seen a cliff.\n");
-
           uint16_t time_started_reverse_mode = seconds_since_start;
           drive_system_set_mode(REVERSE, time_started_reverse_mode);
         }
