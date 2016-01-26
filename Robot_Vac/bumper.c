@@ -9,7 +9,6 @@
 
 #include "bumper.h"
 
-
 static volatile bool *bumped_into_something = NULL;
 
 

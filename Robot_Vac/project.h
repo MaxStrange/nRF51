@@ -21,6 +21,41 @@ NRF_UART0   - uart 0              - used by my_uart
 NRF_GPIOTE  - including interrupt - used by range_finder
 */
 
+/*
+Pin mappings
+
+P0.01 LCD
+P0.02 LCD
+P0.03 LCD
+P0.04 LCD
+P0.05 LCD
+P0.06 LCD
+P0.07
+P0.08 --Not covered by shield
+P0.09 UART TXD
+P0.10 --Not covered by shield
+P0.11 UART RXD
+P0.12 Range finder
+P0.13 Range finder
+P0.14 Confirm button
+P0.15 Select button
+P0.16 Bumper
+P0.17 Button 1
+P0.18 Button 2
+P0.19 Button 3
+P0.20 Button 4
+P0.21 LED1
+P0.22 LED2
+P0.23 LED3
+P0.24 LED4
+P0.25 Motor
+P0.26 --Not covered by shield
+P0.27 --Not covered by shield
+P0.28 Motor
+P0.29
+P0.30
+*/
+
 //Interrupt table!
 
 /*
