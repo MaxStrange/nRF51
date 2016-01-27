@@ -30,7 +30,7 @@ P0.03 LCD
 P0.04 LCD
 P0.05 LCD
 P0.06 LCD
-P0.07
+P0.07 Motor
 P0.08 --Not covered by shield
 P0.09 UART TXD
 P0.10 --Not covered by shield
@@ -53,7 +53,7 @@ P0.26 --Not covered by shield
 P0.27 --Not covered by shield
 P0.28 Motor
 P0.29
-P0.30
+P0.30 Motor
 */
 
 //Interrupt table!

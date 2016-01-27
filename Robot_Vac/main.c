@@ -73,16 +73,16 @@ int main(void)
 
 //    debug console
 
-    // while (true)
-    // {
-    //   bool worked = console_go();
-    //   if (!worked)
-    //   {
-    //     const char *help_str = console_get_help_str();
-    //     uart_write_str(help_str);
-    //     uart_write_str(" ");
-    //   }
-    // }
+    while (true)
+    {
+      bool worked = console_go();
+      if (!worked)
+      {
+        const char *help_str = console_get_help_str();
+        uart_write_str(help_str);
+        uart_write_str(" ");
+      }
+    }
 
     while (true)
     {

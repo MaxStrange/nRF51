@@ -11,6 +11,7 @@
 #include "my_timer.h"
 #include "random_numbers.h"
 #include "servo.h"
+#include "drive_system.h"
 
 #include "console.h"
 
@@ -19,7 +20,7 @@ static bool execute_command(const char *cmd);
 static void timer_countdown_from_10(void);
 static void random_number_get_debug(void);
 
-static const char *help_str = "\nUsage: blink, dance, drive, breathe, countdown, random, servo.\n";
+static const char *help_str = "\nUsage: blink, dance, drive, breathe, countdown, random, forward, backward, turn, randir.\n";
 static char console_input[INPUT_LENGTH];
 
 static const command allowable_commands[] =
@@ -61,15 +62,39 @@ static const command allowable_commands[] =
   },
 
   {
-    "servo",
-    &servo_rotate_through_all_angles,
-    "Rotates the servo through all angles."
-  },
-
-  {
     "random",
     &random_number_get_debug,//not in random number module - purely debug function
     "Gets a random number."
+  },
+
+  {
+    "forward",
+    &debug_drive_system_forward,
+    "Drives forward indefinitely."
+  },
+
+  {
+    "backward",
+    &debug_drive_system_backward,
+    "Drives backwards indefinitely."
+  },
+
+  {
+    "turn",
+    &debug_drive_system_spiral,
+    "Spirals indefinitely."
+  },
+
+  {
+    "randir",
+    &debug_drive_system_random,
+    "Spins until it reaches a random direction and then drives straight indefinitely."
+  },
+
+  {
+    "stop",
+    &drive_system_stop,
+    "Stops driving."
   },
 
   {
